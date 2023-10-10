@@ -7,4 +7,5 @@ class Snippet(models.Model):
     code = models.TextField(max_length=5000)
     creation_date = models.DateTimeField(auto_now=True)
 
-
+    def __repr__(self):
+        return f"Item({self.name}, {self.lang}, {self.code}, {self.creation_date})"
