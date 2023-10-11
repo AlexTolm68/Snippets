@@ -1,7 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponseNotFound
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
+from MainApp.forms import SnippetForm
 
 
 def index_page(request):
@@ -10,8 +11,19 @@ def index_page(request):
 
 
 def add_snippet_page(request):
-    context = {'pagename': 'Добавление нового сниппета'}
-    return render(request, 'pages/add_snippet.html', context)
+    if request.method == "GET":
+        form = SnippetForm()
+        context = {
+            'pagename': 'Добавление нового сниппета',
+            'form': form
+        }
+        return render(request, 'pages/add_snippet.html', context)
+    if request.method == "POST":
+        form = SnippetForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("list")
+        return render(request, 'add_snippet.html', {'form': form})
 
 
 def snippets_page(request):
@@ -31,4 +43,28 @@ def snippet(request, id_snip):
             "snip": snip,
         }
         return render(request, "pages/snippet.html", context)
+
+
+def delete_snippet(request, id_snip):
+    snippet = get_object_or_404(Snippet, id=id_snip)
+
+    if request.method == "POST":
+        snippet.delete()
+        return redirect('list')
+
+
+def update_snippet(request, id_snip):
+    snippet = get_object_or_404(Snippet, id=id_snip)
+    # submitbutton = request.POST.get("submit")
+
+    if request.method == "POST":
+        form = SnippetForm(request.POST)
+        if form.is_valid():
+            snippet.name = form["name"].value()
+            snippet.lang = form["lang"].value()
+            snippet.code = form["code"].value()
+            snippet.save()
+            return redirect("list")
+        return render(request, 'pages/update.html',
+                      {'form': form, 'name': form["name"].value()})
 

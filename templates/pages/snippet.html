@@ -2,17 +2,33 @@
 
 
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col text-center">
+            <h1>{{ pagename }}</h1>
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+            <div class="col">
+                <h1>Просмотр Сниппета</h1>
+                <hr>
+            </div>
+    </div>
 <fieldset>
-   <div class="row">
-       <div class="col col-8">
-           Название: {{ snip.name }}
+    <div class="row">
+        <div class="col col-8">
+           Название:<input type="text" value="{{ snip.name }}" class="form-control">
+        </div>
+        <div class="col col-8">
+           Язык программирования:<input type="text" value="{{ snip.lang }}" class="form-control">
+        </div>
+        <div class="col col-4">
+           Дата создания:<input type="text" value="{{ snip.creation_date }}" class="form-control">
        </div>
-       <div class="col col-4">
-           Дата создания: {{ snip.creation_date }}
-       </div>
-   </div>
-   <hr>
-   <div class="row">
+    </div>
+    <hr>
+    <div class="row">
        <div class="col">
            <div class="p-2 h-100" style="border:1px solid #ced4da; border-radius:5px;">
                <p>
@@ -20,6 +36,21 @@
                </p>
            </div>
        </div>
-   </div>
+    </div>
+    <div class="row row+2">
+        <div class="col col-8">
+            <form action="{% url 'delete_snippet' snip.id %}" method="POST">
+            {% csrf_token %}
+            <button value="delete" type="submit">Удалить сниппет</button>
+            </form>
+        </div>
+        <div class="col col-8">
+            <form action="{% url 'update_snippet' snip.id %}" method="POST">
+                {% csrf_token %}
+                <button value="update" type="submit">Изменить сниппет</button>
+            </form>
+        </div>
+    </div>
 </fieldset>
+</div>
 {% endblock %}
